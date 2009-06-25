@@ -2,14 +2,34 @@
 
 require 'rubygems'
 require 'bio'
+include Math
 
-if ARGV.length == 1
-  puts "execute without options"
-  entry = File.read(ARGV[0])
-elsif ARGV.length == 2
-  entry = File.read(ARGV[1])
+########### INPUT PARAMETERS ##############
+
+@move   = [0,-7,0] # distance
+#@shiftcopy = select(x,y,z) distance
+@rotate_angle = [-15,0,0]
+
+###########################################
+
+
+if ARGV.length == 2 #changed from 1 
+#  puts "execute without options"
+#  entry = File.read(ARGV[0])
+#elsif ARGV.length == 2
+  if ARGV[1] =~ /.+\.pdb/
+    entry = File.read(ARGV[1])
+  else
+    puts "input file should be .pdb format!!"; exit
+  end
+
+elsif
+  ARGV[0] == "-N"
+  puts "skip option", ""
 else
-  puts "invalid arguments" ; exit
+  puts "invalid arguments"
+  puts "usage:", "pdbedit.rb -option hoge.pdb", "or", "pdbedit.rb -N hoge.pdb (execute without options)"
+  exit
 end
 
 # PDB parse & into ary {{{1
@@ -74,20 +94,20 @@ def shiftZ #{{{1
   output.puts "END"
 end #}}}1
 
-def move 
+def move # {{{1
   output = File.open("output_move.pdb", "w")
   @arySerial.each_with_index do |item, i|
 
     output.printf("ATOM  %5d  %-4s%-4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n",
                   @arySerial[i], @aryName[i], @aryResName[i], @aryChainID[i], @aryResSeq[i],
-                  @aryX[i],
-                  @aryY[i],
-                  @aryZ[i]+30,
+                  @aryX[i]+@move[0],
+                  @aryY[i]+@move[1],
+                  @aryZ[i]+@move[2] ,
                   @aryOccupancy[i], @aryTempFactor[i])
   end
   output.puts "END"
 
-end
+end #}}}1
 
 
 def shiftcopy #{{{1
@@ -136,7 +156,7 @@ def shiftcopy #{{{1
 end # }}}1
 
 
-def inbox
+def inbox #{{{1
 
   output = File.open("output_inbox.pdb", "w")
   #tmp = File.open("tmpinbox.pdb", "w")
@@ -156,19 +176,76 @@ def inbox
                   @aryOccupancy[i], @aryTempFactor[i])
     end
   end
+end #}}}1
+
+
+def rotate
+
+  averageCorrdinates =[]
+
+%w(@aryX @aryY @aryZ).each do |a|
+  sum = 0, n = 0
+  eval(a).inject(eval(a)[0]) {|sum, n| sum + n}
+  averageCorrdinates << sum/eval(a).length
 end
 
+# if you need only central coordinates
+if ARGV[0] == "-central"; p averageCorrdinates; exit; end
+
+# shift all atoms so that average coordinates is origin(0,0,0)
+coordXorg = []; coordYorg = []; coordZorg = []
+  @arySerial.each_with_index{ |item, i|
+                  coordXorg << @aryX[i]-averageCorrdinates[0]
+                  coordYorg << @aryY[i]-averageCorrdinates[1]
+                  coordZorg << @aryZ[i]-averageCorrdinates[2]
+  } 
 
 
+x2, y2, z2 = [], [], []; x3, y3, z3 = [], [], []; x4, y4, z4 = [], [], []
+
+# calculate X ax rotation
+coordXorg.zip(coordYorg, coordZorg){|x,y,z|
+  x2 << x
+  y2 << (y*cos(@rotate_angle[0]*PI/180) - z*sin(@rotate_angle[0]*PI/180))
+  z2 << (y*sin(@rotate_angle[0]*PI/180) + z*cos(@rotate_angle[0]*PI/180))
+}
+# calculate Y ax rotation
+x2.zip(y2, z2){|x,y,z|
+  x3 << (x*cos(@rotate_angle[1]*PI/180) + z*sin(@rotate_angle[1]*PI/180))
+  y3 << y
+  z3 << (-x*sin(@rotate_angle[1]*PI/180) + z*cos(@rotate_angle[1]*PI/180))
+}
+# calculate Z ax rotation
+x3.zip(y3, z3){|x,y,z|
+  x4 << (x*cos(@rotate_angle[2]*PI/180) - y*sin(@rotate_angle[2]*PI/180))
+  y4 << (x*sin(@rotate_angle[2]*PI/180) + y*cos(@rotate_angle[2]*PI/180))
+  z4 << z
+}
+
+output = File.open("output_rotate.pdb", "w")
+
+  @arySerial.each_with_index { |item, i|
+
+    output.printf("ATOM  %5d  %-4s%-4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n",
+                  @arySerial[i], @aryName[i], @aryResName[i], @aryChainID[i], @aryResSeq[i],
+                  x4[i]+averageCorrdinates[0],
+                  y4[i]+averageCorrdinates[1],
+                  z4[i]+averageCorrdinates[2],
+                  @aryOccupancy[i], @aryTempFactor[i])
+  } 
+  output.puts "END"
+end
 
 
 case ARGV[0]
-when "-N"      
-  puts "skip option"
-when "-maxmin"; maxmin
-when "-serial"; serial
-when "-move"  ; move
-when "-shiftcopy"  ; shiftcopy
-when "-inbox"  ; inbox
-else; puts "no arguments"; exit
+when "-maxmin"    ; maxmin
+when "-serial"    ; serial
+when "-move"      ; move
+when "-shiftcopy" ; shiftcopy
+when "-inbox"     ; inbox
+when "-rotate"    ; rotate
+when "-central"   ; rotate
+else; puts "invalid option"; exit
 end
+
+
