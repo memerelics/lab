@@ -1,0 +1,12 @@
+trajin mdEE.mdcrd.gz 1 4000
+average mdEE-AvStruc.pdb pdb
+
+rms first out CA_mdEE.rmsd @CA
+rms previous out CA_prev_mdEE.rmsd @CA
+rms first out CACN_mdEE.rmsd @CA,C,N
+
+
+distance hoge :1-31 :32-62 out distMonomer_mdEE.dat
+distance hogehoge :16@CA :47@CA out distcoreCA_mdEE.dat
+distance hogehogehoge :16 :47 out distcoreRESID_mdEE.dat
+go
