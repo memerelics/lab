@@ -6,7 +6,7 @@ include Math
 
 ########### INPUT PARAMETERS ##############
 
-@move   = [0,-7,0] # distance
+@move   = [2,2,0] # distance
 #@shiftcopy = select(x,y,z) distance
 @rotate_angle = [-15,0,0]
 
@@ -42,17 +42,17 @@ pdb = Bio::PDB.new(entry)
 
 pdb.each_atom do |atom| 
 
-  @arySerial <<  atom.serial
-  @aryName <<  atom.name
-  @aryResName <<  atom.resName
-  @aryChainID <<  atom.chainID
-  @aryResSeq <<  atom.resSeq
-  @aryX <<  atom.x
-  @aryY <<  atom.y
-  @aryZ <<  atom.z
-  @aryOccupancy <<  atom.occupancy
-  @aryTempFactor <<  atom.tempFactor
-  # @arySegID <<  atom.segID
+  @arySerial     << atom.serial
+  @aryName       << atom.name
+  @aryResName    << atom.resName
+  @aryChainID    << atom.chainID
+  @aryResSeq     << atom.resSeq
+  @aryX          << atom.x
+  @aryY          << atom.y
+  @aryZ          << atom.z
+  @aryOccupancy  << atom.occupancy
+  @aryTempFactor << atom.tempFactor
+  # @arySegID    << atom.segID
 
 end # }}}1
 
@@ -238,6 +238,7 @@ end
 
 
 case ARGV[0]
+when "-N"
 when "-maxmin"    ; maxmin
 when "-serial"    ; serial
 when "-move"      ; move
@@ -247,5 +248,3 @@ when "-rotate"    ; rotate
 when "-central"   ; rotate
 else; puts "invalid option"; exit
 end
-
-
