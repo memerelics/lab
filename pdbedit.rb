@@ -6,9 +6,9 @@ include Math
 
 ########### INPUT PARAMETERS ##############
 
-@move   = [2,2,0] # distance
+@move   = [0,0,-5] # distance
 #@shiftcopy = select(x,y,z) distance
-@rotate_angle = [-15,0,0]
+@rotate_angle = [-10,0,0]
 
 ###########################################
 
@@ -54,15 +54,18 @@ pdb.each_atom do |atom|
   @aryTempFactor << atom.tempFactor
   # @arySegID    << atom.segID
 
-end # }}}1
+end 
 
 
+# }}}1
 def maxmin # {{{1
   puts "X: max=#{@aryX.max}, min=#{@aryX.min}"
   puts "Y: max=#{@aryY.max}, min=#{@aryY.min}"
   puts "Z: max=#{@aryZ.max}, min=#{@aryZ.min}"
-end #}}}1
+end 
 
+
+#}}}1
 def serial #{{{1
   output = File.open("output_serial.pdb", "w")
 
@@ -76,8 +79,10 @@ def serial #{{{1
 
   end
   output.puts "END"
-end #}}}1
+end 
 
+
+#}}}1
 def shiftZ #{{{1
   output = File.open("output_shiftZ.pdb", "w")
 
@@ -92,10 +97,14 @@ def shiftZ #{{{1
 
   end
   output.puts "END"
-end #}}}1
+end 
 
+
+#}}}1
 def move # {{{1
-  output = File.open("output_move.pdb", "w")
+
+fnn = ARGV[1].sub(/\..+/,"")
+  output = File.open("#{fnn}Mov_#{@move[0]}_#{@move[1]}_#{@move[2]}.pdb", "w")
   @arySerial.each_with_index do |item, i|
 
     output.printf("ATOM  %5d  %-4s%-4s%1s%4d    %8.3f%8.3f%8.3f%6.2f%6.2f\n",
@@ -107,9 +116,10 @@ def move # {{{1
   end
   output.puts "END"
 
-end #}}}1
+end 
 
 
+#}}}1
 def shiftcopy #{{{1
 
   output = File.open("output_shiftcopy.pdb", "w")
@@ -153,9 +163,11 @@ def shiftcopy #{{{1
                   @aryOccupancy[x], @aryTempFactor[x])
   }
   output.puts "END"
-end # }}}1
+end 
 
 
+
+# }}}1
 def inbox #{{{1
 
   output = File.open("output_inbox.pdb", "w")
@@ -177,9 +189,7 @@ def inbox #{{{1
     end
   end
 end #}}}1
-
-
-def rotate
+def rotate #{{{
 
   averageCorrdinates =[]
 
@@ -222,7 +232,8 @@ x3.zip(y3, z3){|x,y,z|
   z4 << z
 }
 
-output = File.open("output_rotate.pdb", "w")
+fnn = ARGV[1].sub(/\..+/,"")
+output = File.open("#{fnn}Rot_#{@rotate_angle[0]}_#{@rotate_angle[1]}_#{@rotate_angle[2]}.pdb", "w")
 
   @arySerial.each_with_index { |item, i|
 
@@ -235,6 +246,9 @@ output = File.open("output_rotate.pdb", "w")
   } 
   output.puts "END"
 end
+
+
+#}}}
 
 
 case ARGV[0]
