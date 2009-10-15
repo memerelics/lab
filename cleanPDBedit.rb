@@ -40,20 +40,27 @@ open(ARGV[1]){|file|
 }
 
 if ARGV[0] == "-residNo"
+    atomcount = @startNo * @residueAtomNo
+     
 puts @header
 @aryRecord.each_with_index {|a, i|
 
+    if (atomcount + i)/@residueAtomNo == 10000
+        atomcount = -i
+    end
+   # puts atomcount.to_s + ": " + i.to_s + ": " + ((atomcount + i)/@residueAtomNo).to_s
+    
     # old expression
     # "%-6s%5d %-4s%-1s%3s %-1s%4d%-1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %-4s%2s%-2s\n"
-    printf("%-6s%5d %-4s%-1s%3s %-1s%5d   %8.3f%8.3f%8.3f%6.2f%6.2f      %-4s%2s%-2s\n",
+    printf("%-6s%5d %-4s%-1s%3s %-1s%4d%-1s   %8.3f%8.3f%8.3f%6.2f%6.2f      %-4s%2s%-2s\n",
             @aryRecord[i],
             @arySerial[i],
             @aryName[i],
             @aryAltLoc[i],
             @aryResName[i],
             @aryChainID[i],
-            (@startNo + i/@residueAtomNo), #@aryResSeq[i],
-           # @aryiCode[i],
+            ((atomcount + i)/@residueAtomNo), #@aryResSeq[i],
+           @aryiCode[i],
             @aryX[i],
             @aryY[i],
             @aryZ[i],
@@ -62,7 +69,7 @@ puts @header
             @arySegID[i],
             @aryElement[i],
             @aryCharge[i] 
-           ) 
+           )
 }
 puts @footer
 end
