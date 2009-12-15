@@ -14,23 +14,27 @@ when "Ch5"
     filePrefix = "Ch5_"
     mdPath = "11.5thChWT/"
     mdpFile = "mdpCh5.mdp"
+    emStructue = "Ch5_EM.pdb"  # put under mdPath
     topFile = "1120.Ch5WT.top"
 when "Mut"
     jobPrefix = "Mut"
     filePrefix = "ChMut_"
     mdPath = "11.Mut/4.MD/"
+    emStructue = "ChMut_EMdone.pdb"
     mdpFile = "mdpMut.mdp"
     topFile = "11.Mut.top"
 when "M1EQ"
     jobPrefix = "M1EQ"
     filePrefix = "Mut1E113Q_"
     mdPath = "11.Mut1E113Q/4.MD/"
+    emStructue = "Mut1E113Q_EM.pdb"
     mdpFile = "mdpE113Q.mdp"
     topFile = "1124.E113Q.top"
 when "M1MY"
     jobPrefix = "M1MY"
     filePrefix = ""
     mdPath = ""
+    emStructue = ""
     mdpFile = ""
     topFile = ""
 end
@@ -48,7 +52,6 @@ mkdir #{mdPath}#{now}-#{goal}ns
     grompp -f #{mdpFile} -c #{filePrefix}#{old}-#{now}ns.pdb -p #{topFile} -o #{filePrefix}#{now}-#{goal}ns.tpr -np #{mpi}
     n1ge -pl 2 -mpi #{mpi} -N #{jobPrefix}#{now}-#{goal} -q bes2 -g 4B090157 mdrun -s #{filePrefix}#{now}-#{goal}ns.tpr -o #{filePrefix}#{now}-#{goal}ns.trr -c #{filePrefix}#{now}-#{goal}ns.pdb
 )
-    #%x(mkdir #{mdPath}82-84ns)
 else 
     puts "directory exists"
 end
