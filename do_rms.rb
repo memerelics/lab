@@ -6,7 +6,7 @@
 require 'pp'
 
 ## define ##
-start_ns = 4; lim_ns = 20
+start_ns = 14; lim_ns = 16
 
 keiList = [ "Ch5", "Mut", "M1EQ", "M1MY" ]
 kei = ARGV[0]
