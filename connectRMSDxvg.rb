@@ -7,21 +7,20 @@
 # ./connectRMSDxvg.rb rmsdCh5_TM1_0-1ns.xvg -> edit format
 
 
-start_ns = 2; lim_ns = 14
+start_ns = 2; lim_ns = 20
 
 
-if ARGV[0] =~ /\.xvg/
-    #for i in 1..7
+if ARGV[0] =~ /\.xvg/ #{{{
     fullFileName = ARGV[0]
     convert_start_time_ns = ARGV[1].to_f
-    #fullFileName = "rmsdMut1E113Q_TM"+i.to_s+"_14-16ns.xvg"
-    #convert_start_time_ns = 14
 
     puts "convert format of " + fullFileName
     puts "start time is " + convert_start_time_ns.to_s + " ns(" + (convert_start_time_ns*1000).to_s + "ps)"
 
     file = File.open("out_#{fullFileName.sub(".xvg", "")}.txt", "w") 
+
     file.puts "time/ns rmsd/Angstrom" if convert_start_time_ns == 0
+
     if File.exists?(fullFileName) 
         twons = File.open(fullFileName) 
         while line = twons.gets
@@ -30,15 +29,13 @@ if ARGV[0] =~ /\.xvg/
             end
         end
     end
-    #end
-
-else
+#}}}
+else 
 
     rmsdFileName = ARGV[0] #.sub("rmsd", "")
     puts rmsdFileName + ": " + start_ns.to_s + " - " + lim_ns.to_s
 
     file = File.open("out_#{rmsdFileName}#{start_ns}-#{lim_ns}ns.txt", "w") 
-    file.puts "time/ns rmsd/Angstrom"
 
     ####### par 2ns #########
     i = start_ns
@@ -59,5 +56,4 @@ else
     end
 
     file.close
-
 end
