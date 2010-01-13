@@ -2,7 +2,8 @@
 
 # 0-20 only
 
-[ "EC1", "EC2", "EC3", "IC1", "IC2", "IC3" ].each do |lpDomain|
+#[ "EC1", "EC2", "EC3", "IC1", "IC2", "IC3" ].each do |lpDomain|
+[ "C-alpha" ].each do |lpDomain|
     
 [ "Ch5_", "ChMut_", "Mut1E113Q_", "Mut1M257Y_" ].each do |filePrefix|
         if filePrefix == "ChMut_"
