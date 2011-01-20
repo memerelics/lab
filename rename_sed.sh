@@ -14,3 +14,7 @@ for orig do
   echo "$orig -> $new"
   mv "$orig" "$new"
 done
+
+### EXAMPLE ###
+# $ echo hogehoge.txt | sed 's/\(.*\)/\1.csv/g'
+# => hogehoge.txt.csv
